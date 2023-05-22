@@ -45,9 +45,9 @@ async def main():
     api_id = int(os.getenv('API_ID'))
     api_hash = os.getenv('API_HASH')
 
-    session_string = os.getenv('SESSION_STRING')
+    session_string = os.getenv('SESSION')
 
-    client = Client(api_id=api_id, api_hash=api_hash, session_string=session_string)
+    client = Client(api_id=api_id, api_hash=api_hash, session=session)
     await client.start()
 
     while True:
