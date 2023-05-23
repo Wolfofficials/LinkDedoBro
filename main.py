@@ -68,7 +68,7 @@ async def main():
         'my_session',
         api_id=api_id,
         api_hash=api_hash,
-        session_name=session_string
+        session_string=session_string
     )
     await client.start()
 
