@@ -2,7 +2,7 @@ import os
 import asyncio
 import random
 import time
-from pyrogram import Client
+from telethon import TelegramClient, events
 
 groups_file = 'groups.txt'
 texts_file = 'texts.txt'
@@ -13,7 +13,7 @@ async def join_groups(client):
 
     for group in groups:
         try:
-            await client.join_chat(group)
+            await client(JoinChannelRequest(group))
             joined_groups.append(group)
             print(f"Joined group: {group}")
             await asyncio.sleep(10)  # Delay of 10 seconds before joining the next group
@@ -64,12 +64,7 @@ async def main():
     api_hash = os.getenv('API_HASH')
     session_string = os.getenv('SESSION')
 
-    client = Client(
-        'my_session',
-        api_id=api_id,
-        api_hash=api_hash,
-        session_string=session_string
-    )
+    client = TelegramClient(session_string, api_id, api_hash)
     await client.start()
 
     while True:
@@ -77,7 +72,7 @@ async def main():
         await send_message(client, joined_groups)
         await asyncio.sleep(10)  # Delay of 10 seconds before sending the next message
 
-    await client.stop()
+    await client.disconnect()
 
 if __name__ == '__main__':
     asyncio.run(main())
