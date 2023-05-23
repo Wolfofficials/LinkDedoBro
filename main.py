@@ -2,7 +2,7 @@ import os
 import asyncio
 import random
 import time
-from pyrogram import Client
+from pyrogram import Client, session
 
 groups_file = 'groups.txt'
 texts_file = 'texts.txt'
@@ -41,22 +41,6 @@ async def send_message(client, joined_groups):
         print(f"Failed to send message in group: {group}")
         print(f"Error: {str(e)}")
 
-async def main():
-    api_id = int(os.getenv('API_ID'))
-    api_hash = os.getenv('API_HASH')
-
-    session= os.getenv('SESSION')
-
-    client = Client(api_id=api_id, api_hash=api_hash, session=session)
-    await client.start()
-
-    while True:
-        joined_groups = await join_groups(client)
-        await send_message(client, joined_groups)
-        await asyncio.sleep(10)  # Delay of 10 seconds before sending the next message
-
-    await client.stop()
-
 def read_groups_file():
     with open(groups_file, 'r') as file:
         groups = file.read().splitlines()
@@ -75,5 +59,31 @@ def remove_group(group):
             if line.strip() != group:
                 file.write(line)
 
+async def main():
+    api_id = int(os.getenv('API_ID'))
+    api_hash = os.getenv('API_HASH')
+    session_string = os.getenv('SESSION')
+
+    session_name = "my_session"  # Choose a session name
+    session_object = session.Session(
+        session_name=session_name,
+        string=session_string
+    )
+
+    client = Client(
+        api_id=api_id,
+        api_hash=api_hash,
+        session=session_object
+    )
+    await client.start()
+
+    while True:
+        joined_groups = await join_groups(client)
+        await send_message(client, joined_groups)
+        await asyncio.sleep(10)  # Delay of 10 seconds before sending the next message
+
+    await client.stop()
+
 if __name__ == '__main__':
-    asyncio.run(main())
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(main())
