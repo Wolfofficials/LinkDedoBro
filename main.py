@@ -2,7 +2,7 @@ import os
 import asyncio
 import random
 import time
-from pyrogram import Client, session
+from pyrogram import Client
 
 groups_file = 'groups.txt'
 texts_file = 'texts.txt'
@@ -64,16 +64,11 @@ async def main():
     api_hash = os.getenv('API_HASH')
     session_string = os.getenv('SESSION')
 
-    session_name = "my_session"  # Choose a session name
-    session_object = session.Session(
-        session_name=session_name,
-        string=session_string
-    )
-
     client = Client(
+        'my_session',
         api_id=api_id,
         api_hash=api_hash,
-        session=session_object
+        session_name=session_string
     )
     await client.start()
 
@@ -85,5 +80,4 @@ async def main():
     await client.stop()
 
 if __name__ == '__main__':
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(main())
+    asyncio.run(main())
